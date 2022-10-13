@@ -89,7 +89,7 @@ fn init(game: &mut Game, rl: &RaylibHandle) {
     game.ball.position = Vector2::new(w / 2.0, h / 2.0);
     game.ball.speed = Vector2::default();
     game.ball.radius = 7.0;
-    game.ball.color = Color::BLACK;
+    game.ball.color = Color::WHITE;
     game.ball.active = false;
 }
 
@@ -194,7 +194,7 @@ fn draw(game: &Game, rl: &mut RaylibHandle, thread: &RaylibThread) {
     let quarter_width = width / 4;
     let quarter_height = height / 4;
 
-    d.clear_background(Color::WHITE);
+    d.clear_background(Color::BLACK);
 
     d.draw_rectangle(
         (game.player_one.racket.position.x - game.player_one.racket.size.x / 2.0) as i32,
@@ -214,7 +214,7 @@ fn draw(game: &Game, rl: &mut RaylibHandle, thread: &RaylibThread) {
 
     d.draw_circle_v(game.ball.position, game.ball.radius as f32, game.ball.color);
 
-    d.draw_text(&game.player_one.score.to_string(), quarter_width, quarter_height, 72, Color::BLACK);
-    d.draw_text(&game.player_two.score.to_string(), quarter_width * 3, quarter_height, 72, Color::BLACK);
+    d.draw_text(&game.player_one.score.to_string(), quarter_width, quarter_height, 72, Color::WHITE);
+    d.draw_text(&game.player_two.score.to_string(), quarter_width * 3, quarter_height, 72, Color::WHITE);
 
 }
