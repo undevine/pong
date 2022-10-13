@@ -96,17 +96,11 @@ fn init(game: &mut Game, rl: &RaylibHandle) {
 fn update(game: &mut Game, rl: &RaylibHandle) {
     let (w, h) = (rl.get_screen_width() as f32, rl.get_screen_height() as f32);
 
-    if rl.is_key_down(KEY_UP) {
-        if game.player_one.racket.position.y > game.player_one.racket.size.y / 2.0 {
-            game.player_one.racket.position.y -= MOVEMENT_SPEED;
-        }
-    }
-    if rl.is_key_down(KEY_DOWN) {
-        if game.player_one.racket.position.y < rl.get_screen_height() as f32 - game.player_one.racket.size.y / 2.0 {
-            game.player_one.racket.position.y += MOVEMENT_SPEED;
-        }
-    }
     if !game.ball.active {
+        game.ball.position = Vector2::new(rl.get_screen_width() as f32 / 2.0, rl.get_screen_height() as f32 / 2.0);
+        game.player_one.racket.position.y = rl.get_screen_height() as f32 / 2.0;
+        game.player_two.racket.position.y = rl.get_screen_height() as f32 / 2.0;
+
         if rl.is_key_pressed(KEY_SPACE) {
             let mut rng = rand::thread_rng();
             game.ball.active = true;
@@ -115,15 +109,29 @@ fn update(game: &mut Game, rl: &RaylibHandle) {
                                                rng.gen_range(-BALL_MAX_SPEED..BALL_MAX_SPEED));
             }
         }
-    }
-
-    if game.ball.active {
-        game.ball.position += game.ball.speed;
-        if game.ball.position.y > game.player_two.racket.position.y {
-            game.player_two.racket.position.y += MOVEMENT_SPEED;
+    } else {
+        if rl.is_key_down(KEY_UP) {
+            if game.player_one.racket.position.y > game.player_one.racket.size.y / 2.0 {
+                game.player_one.racket.position.y -= MOVEMENT_SPEED;
+            }
         }
+        if rl.is_key_down(KEY_DOWN) {
+            if game.player_one.racket.position.y < rl.get_screen_height() as f32 - game.player_one.racket.size.y / 2.0 {
+                game.player_one.racket.position.y += MOVEMENT_SPEED;
+            }
+        }
+
+        game.ball.position += game.ball.speed;
+
         if game.ball.position.y < game.player_two.racket.position.y {
-            game.player_two.racket.position.y -= MOVEMENT_SPEED;
+            if game.player_two.racket.position.y > game.player_two.racket.size.y / 2.0 {
+                game.player_two.racket.position.y -= MOVEMENT_SPEED;
+            }
+        }
+        if game.ball.position.y > game.player_two.racket.position.y {
+            if game.player_two.racket.position.y < rl.get_screen_height() as f32 - game.player_two.racket.size.y / 2.0 {
+                game.player_two.racket.position.y += MOVEMENT_SPEED;
+            }
         }
         if game.ball.speed.x > -BALL_MIN_SPEED && game.ball.speed.x < BALL_MIN_SPEED {
             if game.ball.speed.x < 0.0 {
@@ -139,8 +147,6 @@ fn update(game: &mut Game, rl: &RaylibHandle) {
                 game.ball.speed.y = BALL_MIN_SPEED;
             }
         }
-    } else {
-        game.ball.position = Vector2::new(rl.get_screen_width() as f32 / 2.0, rl.get_screen_height() as f32 / 2.0);
     }
 
     if game.ball.position.y + game.ball.radius as f32 >= h || game.ball.position.y - game.ball.radius as f32 <= 0.0
